@@ -1,33 +1,12 @@
 import express from 'express';
+import routes from './routes';
+import path from 'path';
 
-const app = express()
+const app = express();
 
-const users = [
-    'Dyana',
-    'Allyson',
-    'Snoopy'
-];
+app.use(express.json());
+app.use(routes);
 
-//Busca todos os usuários
-app.get('/users', (req, resp) => {
-    resp.json(users);
-})
-
-//Busca um único usuário
-app.get('/users/:id', (req, resp) =>{
-    const id = Number(req.params.id);
-
-    return resp.json(users[id])
-})
-
-app.post('/users', (req,resp) => {
-    
-    const user = {
-        'name': 'Dyana',
-        'email': 'dyana.tavares1@gmail.com'
-    };
-
-    return resp.json(user);
-})
+app.use('/uploads', express.static(path.resolve(__dirname, '..', 'uploads')))
 
 app.listen(3333);
