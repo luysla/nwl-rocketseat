@@ -1,50 +1,23 @@
-import express from 'express'
-import knex from './database/connection'
+import express from 'express';
+
+import PointsController from './controllers/pointsController';
+import ItemsController from './controllers/itemsController';
 
 const routes = express.Router() 
+const pointsController = new PointsController;
+const itemsController = new ItemsController;
 
-routes.get('/items', async(req, resp) => {
+//Lista todos os items 
+routes.get('/items', itemsController.index);
 
-    const items = await knex('items').select('*');
+//Cria novo ponto de coleta
+routes.post('/points', pointsController.create);
 
-    const serializedItems = items.map(item =>{
-        return { 
-            id: item.id,
-            titulo: item.titulo,
-            url_imagem: `http://localhost:3333/uploads/${item.imagem}`
-         }
-    }) 
+//Busca um ponto de coleta específico
+routes.get('/points/:id', pointsController.show);
 
-    return resp.json(serializedItems);
-})
-
-routes.post('/points', async(req, resp) => {
-
-    const {
-        nome, 
-        email,
-        whatsapp,
-        latitude,
-        longitude,
-        cidade,
-        uf,
-        items
-    } = req.body;
-
-   await knex('points').insert({
-        imagem: 'imagem-fake',
-        nome, 
-        email,
-        whatsapp,
-        latitude,
-        longitude,
-        cidade,
-        uf
-    });
-
-    return resp.json( { success: true });
-
-})
+//Busca por pontos em uma uf/cidade específica
+routes.get('/points', pointsController.index);
 
 
 export default routes;
